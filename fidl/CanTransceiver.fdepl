@@ -1,7 +1,7 @@
 import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
-import "CanReceiver.fidl"
+import "CanTransceiver.fidl"
 
-define org.genivi.commonapi.someip.deployment for interface commonapi.CanReceiver {
+define org.genivi.commonapi.someip.deployment for interface commonapi.CanTransceiver {
     SomeIpServiceID = 3000
     attribute distances {
         SomeIpNotifierEventGroups = { 3100 }
@@ -24,8 +24,8 @@ define org.genivi.commonapi.someip.deployment for interface commonapi.CanReceive
 }
 
 define org.genivi.commonapi.someip.deployment for provider as Service {
-    instance commonapi.CanReceiver {
-        InstanceId = "commonapi.CanReceiver"
+    instance commonapi.CanTransceiver {
+        InstanceId = "commonapi.CanTransceiver"
         SomeIpInstanceID = 3001
         SomeIpUnicastAddress = "192.168.0.2"
         SomeIpReliableUnicastPort = 30010
