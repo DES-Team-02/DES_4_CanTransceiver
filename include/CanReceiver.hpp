@@ -1,5 +1,5 @@
-#ifndef CANRECEIVER_HPP
-#define CANRECEIVER_HPP
+#ifndef CAN_RECEIVER_HPP
+#define CAN_RECEIVER_HPP
 
 #include <iostream>
 #include <cstring>
@@ -11,42 +11,36 @@
 #include <net/if.h>
 #include <atomic> 
 #include <chrono>
+#include <fcntl.h>
 #include <mutex>
 
 class CanReceiver{
 
 public:
-    CanReceiver();
-    CanReceiver(std::string ifn);
+    CanReceiver(const std::vector<std::string>& interfaces);
     ~CanReceiver();
     int run();
 
 private:
 
-    // const char* CAN_INTERFACE_0 = "can0";
-    // const char* CAN_INTERFACE_1 = "can1";
-    const std::string _interface_name;
-
+    std::vector<std::string> _interfaces;
     int _soc;
+
+    std::atomic<bool> _running;
+    std::mutex _dataMutex;
 
     short _rawRpm;
     short _sensorFrontLeft;
-    short _sensorFrontRight;
     short _sensorFrontMiddle;
+    short _sensorFrontRight;
 
-    std::mutex _dataMutex;
-    std::atomic<bool> _running;
     std::chrono::steady_clock::time_point _last_time;
 
-    
-
-
     int openPort(const char* interface);
-    void readData();
+    void readData(int socket, const std::string& interface);
     void filteringData();
     void sendData();
     void closePort();
-
 
 };
 
