@@ -17,17 +17,28 @@ CanDataRegister::~CanDataRegister() {}
 
 /* Registers the vSOME/IP service*/
 void CanDataRegister::CanTransceiverInit(){
-    while(!runtime->registerService("local", "commonapi.CanTransceiver", CanTransceiverService, "CanTransceiverService")){
+    // define service's domain, instance, connection
+    std::string domain      = "local";
+    std::string instance    = "commonapi.CanTransceiver";
+    std::string connection  = "service-CanTransceiver";
+    bool successfullyRegistered = runtime->registerService(domain, instance, CanTransceiverService, connection);
+    while(!successfullyRegistered){
         std::cout << "Register CanTransceiver Service failed, trying again in 100 milliseconds..." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        successfullyRegistered = runtime->registerService(domain, instance, CanTransceiverService, connection);
     }
     std::cout << "Successfully Registered CanTransceiver Service!" << std::endl;
 }
 
+
 /* sets the attributes of vSOME/IP service*/
-void CanDataRegister::setServiceAttributes(uint32_t rpm, uint32_t speed, uint32_t sensor0, uint32_t sensor1, uint32_t sensor2) {
+void CanDataRegister::setServiceRpmAttributes(uint32_t rpm, uint32_t speed) {
     // set via StubImpl
-    CanTransceiverService->setSonarArrayStruct();
     CanTransceiverService->setRpmAttribute(rpm);
     CanTransceiverService->setSpeedAttribute(speed);
+}
+
+void CanDataRegister::setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR) {
+    // set via StubImpl
+    CanTransceiverService->setSonarArrayStruct(sensorFL, sensorFM, sensorFR);
 }

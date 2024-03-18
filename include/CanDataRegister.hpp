@@ -11,10 +11,11 @@ class CanDataRegister {
 public:
     CanDataRegister();
     virtual ~CanDataRegister();
-    void setServiceAttributes(uint32_t rpm, uint32_t speed, uint32_t sensor0, uint32_t sensor1, uint32_t sensor2); 
+    void setServiceRpmAttributes(uint32_t rpm, uint32_t speed);
+    void setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR); 
 private:
     std::shared_ptr<CommonAPI::Runtime> runtime;
-    std::shared_ptr<CanReceiverImpl> CanReceiverService;
+    std::shared_ptr<CanTransceiverImpl> CanTransceiverService;
     void CanTransceiverInit();
 };
 

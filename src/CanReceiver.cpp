@@ -1,7 +1,7 @@
 #include "CanReceiver.hpp"
 
-CanReceiver::CanReceiver(const std::vector<std::string>& interfaces):
-    _interfaces(std::vector<std::string> _interfaces = { "can0", "can1"};),
+CanReceiver::CanReceiver(const std::string& interface):
+    _interface(interface),
     _soc(-1),
     _running(false),
     _rawRpm(0), 
@@ -28,7 +28,7 @@ int CanReceiver::openPort(const char* interface) {
     // Set the family type for the address to CAN
     addr.can_family = AF_CAN;  
     // Copy the port name to the ifreq structure
-    strcpy(ifr.ifr_name, _interface_name.c_str());  
+    strcpy(ifr.ifr_name, _interface);  
     // Get the interface index of the CAN device
     if (ioctl(_soc, SIOCGIFINDEX, &ifr) < 0) 
     {
@@ -60,41 +60,83 @@ void CanReceiver::readData(int socket, const std::string& interface){
             //save timestamp if can frame received
             _last_time = std::chrono::steady_clock::now();
             if(interface == "can0"){
-                std::lock_guard<std::mutex> lock(_dataMutex);
-                short received_raw_rpm = frame.data[0] << 8 | frame.data[1];
-                // print received data
-                std::cout << "Received rawRpm   : " << short received_raw_rpm << std::endl;
-                _rawRpm = received_raw_rpm;
-                } else if (interface == "can1"){
-                // read raw data from frame & store
-                std::lock_guard<std::mutex> lock(dataMutex);
-                short received_sensor_0 = frame.data[0] << 8 | frame.data[1]; 
-                short received_sensor_1 = frame.data[2] << 8 | frame.data[3]; 
-                short received_sensor_2 = frame.data[4] << 8 | frame.data[5]; 
+                int receivedRpm;
+                int currentRpm;
+                {
+                    std::lock_guard<std::mutex> lock(_rpmDataMutex);
+                    receivedRpm = frame.data[0] << 8 | frame.data[1];
+                }
                 // print received data
                 std::cout << "----------------------------------" << std::endl;
-                std::cout << "Received Sensor0   : " << short received_sensor0 << std::endl;
-                std::cout << "Received Sensor1   : " << short received_sensor1 << std::endl; 
-                std::cout << "Received Sensor2   : " << short received_sensor2 << std::endl;
+                std::cout << "Received rawRpm   : " << receivedRpm << std::endl;
+                std::cout << "----------------------------------" << std::endl;
+                _rawRpm = receivedRpm;
+            } else if (interface == "can1"){
+                // read raw data from frame & store
+                std::lock_guard<std::mutex> lock(_sonarDataMutex);
+                int receivedSensor0 = frame.data[0] << 8 | frame.data[1]; 
+                int receivedSensor1 = frame.data[2] << 8 | frame.data[3]; 
+                int receivedSensor2 = frame.data[4] << 8 | frame.data[5]; 
+                // print received data
+                std::cout << "----------------------------------" << std::endl;
+                std::cout << "Received Sensor0   : " << receivedSensor0 << std::endl;
+                std::cout << "Received Sensor1   : " << receivedSensor1 << std::endl; 
+                std::cout << "Received Sensor2   : " << receivedSensor2 << std::endl;
                 std::cout << "----------------------------------" << std::endl;
                 // store data in class variables
-                _sensorFrontLeft = received_sensor_0;
-                _sensorFrontMiddle = received_sensor_1;
-                _sensorFrontRight = received_sensor_2;
+                _sensorFrontLeft = receivedSensor0;
+                _sensorFrontMiddle = receivedSensor1;
+                _sensorFrontRight = receivedSensor2;
             }
         }
     }        
 }
 
+void CanReceiver::rpmDataFilter(int currentRpm){
 
-void CanReceiver::closePort(int soc) {
-    if (soc != -1){
-        close(soc);
-    };
+    MovingAverageFilter(10, 5);
+    double filteredRpm;
+    double filteredSpeed;
+    while(_running) {
+        // filtered rpm
+        filteredRpm = rpmFilter.filter(currentRpm);
+        // calculated speed (sensor wheel on wheel shaft )
+        filteredSpeed = ((filteredRpm) / (WHEEL_RADIUS * 2 * M_PI)) / 6;
+        
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "Filtered RPM      : " << filteredRpm     << std::endl; 
+        std::cout << "Filtered Speed    : " << filteredSpeed   << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+    }
+    {
+        std::lock_guard<std::mutex> lock(_rpmDataMutex);
+        _filteredRpm = filteredRpm;
+        _filteredSpeed = filteredSpeed;
+        registerRpm();
+    }
+}
+
+void CanReceiver::registerRpm(){
+    dataRegister.setServiceRpmAttributes(
+        static_cast<uint32_t>(_filteredRpm), 
+        static_cast<uint32_t>(_filteredSpeed)
+    )
+}
+
+void CanReceiver::registerSonar(){
+    dataRegister.setServiceSonarAttributes(
+        static_cast<uint32_t>(_sensorFrontLeft),
+        static_cast<uint32_t>(_sensorFrontMiddle),
+        static_cast<uint32_t>(_sensorFrontRight)
+    )
+}
+
+void CanReceiver::closePort() {
+        close(_soc);
 }
 
 int CanReceiver::run(){
-    while(openPort(_interface_name) < 0){
+    while(openPort(_interface) < 0){
         std::cerr << "Open port retrying >>>" << std::endl;
         sleep_for(1); 
     }
@@ -103,12 +145,17 @@ int CanReceiver::run(){
     _last_time = std::chrono::steady_clock::now();
 
     std::thread readerThread(&CanReceiver::readData, this);
-    std::thread processThread(&CanReceiver::filteringData, this);
+    std::thread filterThread(&CanReceiver::rpmDataFilter, this);
+    std::thread registerRpmThread(&CanReceiver::registerRpm , this);
+    std::thread registerSonarThread(&CanReceiver::registerSonar , this);
+    
 
     readerThread.join();
-    processThread.join();
+    filterThread.join();
+    registerRpmThread.join();
+    registerSonarThread.join();
 
 
     closePort();
-    
+    return 0;
 }
