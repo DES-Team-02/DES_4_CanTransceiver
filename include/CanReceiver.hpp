@@ -1,9 +1,6 @@
 #ifndef CAN_RECEIVER_HPP
 #define CAN_RECEIVER_HPP
 
-#include "MovingAverageFilter.hpp"
-#include "CanDataRegister.hpp"
-
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
@@ -25,36 +22,21 @@ class CanReceiver
 public:
     CanReceiver(const std::string &interface);
     ~CanReceiver();
-    int run();
+    bool start();
+    void stop();
+    std::vector<uint8_t> getReceivedData();
 
 private:
-    CanDataRegister dataRegister;
-
-    const double FACTOR = 0.025;
-    const double WHEEL_RADIUS = 0.065;
-
     std::string _interface;
     int _soc;
 
     std::atomic<bool> _running;
-    std::mutex _rpmDataMutex;
-    std::mutex _sonarDataMutex;
-
-    int _rawRpm;
-    double _filteredRpm;
-    double _filteredSpeed;
-    int _sensorFrontLeft;
-    int _sensorFrontMiddle;
-    int _sensorFrontRight;
-    
-
-    std::chrono::steady_clock::time_point _last_time;
+    std::mutex _mutex;
+    std::vector<uint8_t> _dataBuffer;
+    std::thread _dataThread;
 
     int openPort(const char *interface);
-    void readData(int socket, const std::string &interface);
-    void rpmDataFilter(int currentRpm);
-    void registerRpm();
-    void registerSonar();
+    void readData();
     void closePort();
 };
 

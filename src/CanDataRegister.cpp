@@ -4,7 +4,7 @@
 using namespace v0_1::commonapi;
 
 /*Constructor.*/
-CanDataRegister::CanDataRegister() {
+CanTransceiverStubImpl::CanTransceiverStubImpl() {
     // Get the commonAPI runtime instance & create the vSOME/IP service
     runtime = CommonAPI::Runtime::get();
     CanTransceiverService = std::make_shared<CanTransceiverStubImpl>();
@@ -13,10 +13,10 @@ CanDataRegister::CanDataRegister() {
 }
 
 /*Destructor*/
-CanDataRegister::~CanDataRegister() {}
+CanTransceiverStubImpl::~CanTransceiverStubImpl() {}
 
 /* Registers the vSOME/IP service*/
-void CanDataRegister::CanTransceiverInit(){
+void CanTransceiverStubImpl::CanTransceiverInit(){
     // define service's domain, instance, connection
     std::string domain      = "local";
     std::string instance    = "commonapi.CanTransceiver";
@@ -32,13 +32,13 @@ void CanDataRegister::CanTransceiverInit(){
 
 
 /* sets the attributes of vSOME/IP service*/
-void CanDataRegister::setServiceRpmAttributes(uint32_t rpm, uint32_t speed) {
+void CanTransceiverStubImpl::setServiceRpmAttributes(uint32_t rpm, uint32_t speed) {
     // set via StubImpl
     CanTransceiverService->setRpmAttribute(rpm);
     CanTransceiverService->setSpeedAttribute(speed);
 }
 
-void CanDataRegister::setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR) {
+void CanTransceiverStubImpl::setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR) {
     // set via StubImpl
     CanTransceiverService->setSonarArrayStruct(sensorFL, sensorFM, sensorFR);
 }

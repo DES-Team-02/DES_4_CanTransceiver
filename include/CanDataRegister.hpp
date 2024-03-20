@@ -7,10 +7,10 @@
 
 using namespace v0_1::commonapi;
 
-class CanDataRegister {
+class CanTransceiverStubImpl {
 public:
-    CanDataRegister();
-    virtual ~CanDataRegister();
+    CanTransceiverStubImpl();
+    virtual ~CanTransceiverStubImpl();
     void setServiceRpmAttributes(uint32_t rpm, uint32_t speed);
     void setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR); 
 private:

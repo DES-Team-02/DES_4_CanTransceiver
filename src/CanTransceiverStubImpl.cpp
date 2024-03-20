@@ -1,13 +1,50 @@
 #include "CanTransceiverStubImpl.hpp"
 
-CanTransceiverStubImpl::CanTransceiverStubImpl() {}
+CanTransceiverStubImpl::CanTransceiverStubImpl() {
+    // Get the commonAPI runtime instance & create the vSOME/IP service
+    runtime = CommonAPI::Runtime::get();
+    CanTransceiverInit();
+}
 
 CanTransceiverStubImpl::~CanTransceiverStubImpl() {}
 
-void CanTransceiverStubImpl::setSonarArrayStruct(uint32_t sensor0, uint32_t sensor1, uint32_t sensor2) {
-    v0::commonapi::CanTransceiver::SonarArrayStruct distances;
-    distances.setSensorfrontleft(sensor0);
-    distances.setSensorfrontmiddle(sensor1);
-    distances.setSensorfrontright(sensor2);
-    setDistancesAttribute(distances);
+/* Registers the vSOME/IP service*/
+void CanTransceiverStubImpl::CanTransceiverInit(){
+    // define service's domain, instance, connection
+    std::string domain      = "local";
+    std::string instance    = "commonapi.CanTransceiver";
+    std::string connection  = "service-CanTransceiver";
+
+    int maxAttempts = 5;
+    int attempts = 0;
+
+    bool successfullyRegistered = false;
+    while(!successfullyRegistered && attempts < maxAttempts){
+        successfullyRegistered = runtime->registerService(domain, instance, shared_from_this(), connection);
+        if(!successfullyRegistered){
+            std::cout << "Register CanTransceiver Service failed, trying again in 0.1seconds..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            attempts++;
+        }      
+    }
+    if (successfullyRegistered){
+        std::cout << "Successfully Registered CanTransceiver Service!" << std::endl;
+    } else {
+        std::cerr << "Failed to register CanTransceiver Service after " << attempts << " attempts." << std::endl;
+    }
 }
+
+void CanTransceiverStubImpl::setServiceRpmAttributes(uint32_t rpm, uint32_t speed) {
+    // Directly set the RPM and Speed attributes
+    setRpmAttribute(rpm);
+    setSpeedAttribute(speed);
+}
+
+void CanTransceiverStubImpl::setServiceSonarAttributes(uint32_t sensorFL, uint32_t sensorFM, uint32_t sensorFR) {
+    // Directly set the Sonar attributes
+    v0::commonapi::CanTransceiver::SonarArrayStruct distances;
+    distances.setSensorfrontleft(sensorFL);
+    distances.setSensorfrontmiddle(sensorFM);
+    distances.setSensorfrontright(sensorFR);
+    setDistancesAttribute(distances);
+} 
