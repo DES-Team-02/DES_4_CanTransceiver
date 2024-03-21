@@ -40,13 +40,16 @@ endforeach()
 ### Executable Sources ###
 set(Can_Transceiver_SRCS
     ./src/main.cpp
-    ./src/CanTransceiver.cpp
+    ./src/CanReceiver.cpp
+    ./src/CanTransceiverStubImpl.cpp
+    ./src/MovingAverageFilter.cpp
+    ./src/RpmProcess.cpp
+    ./src/SonarProcess.cpp
 )
 ### add more src files later
 
 ### Library Sources ###
-FILE(GLOB PRJ_SOMEIP_LIB_SRCS ./src-gen/someip/v$(MAJOR_VERSION)/$(APP_PACKAGE_NAME)/*cpp)
-
+FILE(GLOB PRJ_SOMEIP_LIB_SRCS ./src-gen/someip/v${MAJOR_VERSION}/${APP_PACKAGE_NAME}/*.cpp)
 ### INCLUDE & LINK DIRECTORIES ###
 include_directories(
     ./include

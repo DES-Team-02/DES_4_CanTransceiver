@@ -16,23 +16,20 @@ bool CanReceiver::start() {
         return false;
     }
     _running = true;
-    dataThread = std::thread(&CanReceiver::readData, this);
+    _dataThread = std::thread(&CanReceiver::readData, this);
     return true;
 }
 
 void CanReceiver::stop() {
     _running = false;
-    if (dataThread.joinable()) {
-        dataThread.join();
+    if (_dataThread.joinable()) {
+        _dataThread.join();
     }
     closePort();
 }
-std::vector<uint8_t> CanReceiver::getReceivedData() {
-    std::lock_guard<std::mutex> lock(_mutex);
-    return _dataBuffer; // Return a copy of the data buffer
-}
 
-int CanReceiver::openPort(const char* interface) {
+
+int CanReceiver::openPort() {
     struct ifreq ifr;           // Interface request structure for socket ioctls
     struct sockaddr_can addr;   // Address structure for the CAN socket
 
@@ -75,11 +72,16 @@ void CanReceiver::readData() {
         if (nbytes > 0) {
             std::lock_guard<std::mutex> lock(_mutex);
             // Assuming you want to store the whole CAN frame or just the data field
-            _dataBuffer.insert(_dataBuffer.end(), frame.data, frame.data + sizeof(frame.data));
+            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + sizeof(frame.len));
+
         }
     }
 }
 
+std::vector<uint8_t> CanReceiver::getReceivedData() {
+    std::lock_guard<std::mutex> lock(_mutex);
+    return _dataBuffer; // Return a copy of the data buffer
+}
 
 void CanReceiver::closePort() {
         close(_soc);

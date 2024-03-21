@@ -15,6 +15,7 @@
 #include <mutex>
 #include <thread>
 #include <math.h>
+#include <vector>
 
 class CanReceiver
 {
@@ -31,11 +32,11 @@ private:
     int _soc;
 
     std::atomic<bool> _running;
-    std::mutex _mutex;
+    std::mutex _mutex; 
     std::vector<uint8_t> _dataBuffer;
     std::thread _dataThread;
 
-    int openPort(const char *interface);
+    int openPort();
     void readData();
     void closePort();
 };

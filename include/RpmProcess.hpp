@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
+#include <cstdint>
 #include "MovingAverageFilter.hpp"
 
 struct RpmData {
@@ -10,5 +12,13 @@ struct RpmData {
 
 class RpmProcess {
 public:
-    static RpmData process(const std::vector<uint8_t>& data, double wheel_radius, double disk_radius);
+    RpmProcess();
+    ~RpmProcess();
+
+    static RpmData process(const std::vector<uint8_t>& data);
+
+private:
+    static const double        _wheel_radius;
+    static const double        _disk_radius;
+    static MovingAverageFilter _movingAverageFilter;
 };

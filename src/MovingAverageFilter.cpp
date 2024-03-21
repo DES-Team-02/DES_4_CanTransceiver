@@ -2,19 +2,19 @@
 
 
 MovingAverageFilter::MovingAverageFilter(size_t size, size_t discardSize)
-    : size_(size), discardSize_(discardSize), sum_(0) {}
+    : _size(size), _discardSize(discardSize), _sum(0) {}
 
 
 double MovingAverageFilter::filter(double new_value){
-    if(values_.size() == size_){
-        for(size_t i = 0 ; i < discardSize_; ++i){
-            sum_ -= values_.front();
-            values_.pop();
+    if(_values.size() == _size){
+        for(size_t i = 0 ; i < _discardSize; ++i){
+            _sum -= _values.front();
+            _values.pop();
         }
     }
 
-    values_.push(new_value);
-    sum_ += new_value;
+    _values.push(new_value);
+    _sum += new_value;
 
-    return sum_ / values_.size();
+    return _sum / _values.size();
 }
