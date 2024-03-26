@@ -1,4 +1,5 @@
 #include "CanReceiver.hpp"
+// #include <errno.h>
 
 CanReceiver::CanReceiver(const std::string& interface):
     _interface(interface),
@@ -41,16 +42,17 @@ int CanReceiver::openPort() {
 	    std::cerr << "Socket Creation Error!" << std::endl;
         return -1;
     }
+    addr.can_family = AF_CAN;  
     strcpy(ifr.ifr_name, _interface.c_str());  
 
     if (ioctl(_soc, SIOCGIFINDEX, &ifr) < 0) 
     {
 	    std::cerr << "I/O Control Error." << std::endl;
+        // std::cerr << errno << std::endl;
         close(_soc);
         return (-1);
     }
     // Set the family type for the address to CAN
-    addr.can_family = AF_CAN;  
     addr.can_ifindex = ifr.ifr_ifindex;  
     fcntl(_soc, F_SETFL, O_NONBLOCK);  
     // Bind the socket to the CAN interface
@@ -72,7 +74,7 @@ void CanReceiver::readData() {
         if (nbytes > 0) {
             std::lock_guard<std::mutex> lock(_mutex);
             // Assuming you want to store the whole CAN frame or just the data field
-            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + sizeof(frame.len));
+            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + sizeof(frame.can_dlc));
 
         }
     }

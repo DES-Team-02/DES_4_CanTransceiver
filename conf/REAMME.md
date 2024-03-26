@@ -1,0 +1,1 @@
+#You should make "commonapi.ini" file in your local /etc 

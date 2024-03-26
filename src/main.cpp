@@ -8,8 +8,10 @@ int main(void)
     // Create and start CAN receivers for two interfaces.
     CanReceiver             can0("can0");
     CanReceiver             can1("can1");
-    CanTransceiverStubImpl  transceiverStub;
 
+    auto transceiverStubImpl = std::make_shared<CanTransceiverStubImpl>();
+
+    transceiverStubImpl->init();
     // Start receiving data.
     can0.start();
     can1.start();
@@ -28,12 +30,10 @@ int main(void)
         auto processedSonarData = SonarProcess::process(sonarData);
 
         // Register processed data.
-        transceiverStub.setRpmAttribute(processedRpmData.rpm);
-        transceiverStub.setSpeedAttribute(processedRpmData.speed);
+        transceiverStubImpl->setRpmAttribute(processedRpmData.rpm);
+        transceiverStubImpl->setSpeedAttribute(processedRpmData.speed);
 
-        transceiverStub.setDistancesAttribute(processedSonarData);
-
-        // Implement appropriate delay or logic for next data reception.
+        transceiverStubImpl->setDistancesAttribute(processedSonarData);
     }
 
     // Stop receiving data.

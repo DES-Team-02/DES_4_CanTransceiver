@@ -10,7 +10,7 @@ RpmProcess::~RpmProcess() {}
 
 RpmData RpmProcess::process(const std::vector<uint8_t>& data) {
     if (data.size() < 2) {
-        return {0.0, 0.0}; // 충분한 데이터가 없는 경우
+        return {0.0, 0.0};
     }
 
     unsigned int    rpmValue    = static_cast<unsigned int>((data[0] << 8) | data[1]);
