@@ -62,5 +62,6 @@
         "list": "cpp",
         "future": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

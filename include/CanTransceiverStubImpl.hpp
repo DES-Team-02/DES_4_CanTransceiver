@@ -7,16 +7,17 @@
 #include <chrono>
 #include <thread>
 #include <memory>
-class CanTransceiverStubImpl:public v0_1::commonapi::CanTransceiverStubDefault,
-                             public std::enable_shared_from_this<CanTransceiverStubImpl>
+class CanTransceiverStubImpl:public v0_1::commonapi::CanTransceiverStubDefault
 {
 public:
     CanTransceiverStubImpl();
     virtual ~CanTransceiverStubImpl();
+    
     // void setServiceRpmAttributes(struct rpmData);
     // void setServiceSonarAttributes(struct sonarData); 
 private:
     std::shared_ptr<CommonAPI::Runtime> _runtime;
+    std::shared_ptr<CanTransceiverStubImpl> _CanTransceiverService;
     void CanTransceiverInit();
 
 };

@@ -1,9 +1,10 @@
 #include "CanTransceiverStubImpl.hpp"
-
+using namespace v0_1::commonapi;
 
 CanTransceiverStubImpl::CanTransceiverStubImpl() {
     // Get the commonAPI runtime instance & create the vSOME/IP service
     _runtime = CommonAPI::Runtime::get();
+    _CanTransceiverService = std::make_shared<CanTransceiverStubImpl>();
     CanTransceiverInit();
 }
 
@@ -18,7 +19,7 @@ void CanTransceiverStubImpl::CanTransceiverInit(){
 
     bool successfullyRegistered = false;
     while(!successfullyRegistered){
-        successfullyRegistered = _runtime->registerService(domain, instance, shared_from_this(), connection);
+        successfullyRegistered = _runtime->registerService(domain, instance, _CanTransceiverService, connection);
         if(!successfullyRegistered){
             std::cout << "Register CanTransceiver Service failed, trying again in 0.1seconds..." << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
