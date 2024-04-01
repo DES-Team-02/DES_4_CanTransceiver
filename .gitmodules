@@ -1,0 +1,3 @@
+[submodule "DES_4_CanTransceiver"]
+	path = DES_4_CanTransceiver
+	url = https://github.com/SeungWoo-L/DES_4_CanTransceiver.git

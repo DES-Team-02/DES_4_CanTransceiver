@@ -1,0 +1,29 @@
+{
+	"name": "dev container for vsomeip",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--init",
+		"--privileged",
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined"
+	],
+	"containerEnv": {
+		"GITHUB_API_TOKEN": "${localEnv:GITHUB_API_TOKEN}",
+		"GIT_CONFIG_NAME": "${localEnv:GIT_CONFIG_NAME}",
+		"GIT_CONFIG_EMAIL": "${localEnv:GIT_CONFIG_EMAIL}"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"twxs.cmake",
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-extension-pack",
+				"ms-azuretools.vscode-docker",
+				"GitHub.copilot"
+			]
+		}
+	}
+}
