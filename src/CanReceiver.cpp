@@ -1,5 +1,5 @@
 #include "CanReceiver.hpp"
-// #include <errno.h>
+
 
 CanReceiver::CanReceiver(const std::string& interface):
     _interface(interface),
@@ -67,17 +67,20 @@ int CanReceiver::openPort() {
 
 
 void CanReceiver::readData() {
+    struct can_frame frame;
     while (_running) {
-        struct can_frame frame;
-        ssize_t nbytes = recv(_soc, &frame, sizeof(frame), 0); // Blocking call
-
-        if (nbytes > 0) {
+        ssize_t nbytes = recv(_soc, &frame, sizeof(struct can_frame), MSG_WAITALL); // Blocking call
+        if (nbytes == sizeof(struct can_frame)) {
             std::lock_guard<std::mutex> lock(_mutex);
-            // Assuming you want to store the whole CAN frame or just the data field
-            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + sizeof(frame.can_dlc));
-
+            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + frame.can_dlc);
+            // std::cout << "Received data: ";
+            // for (auto byte : _dataBuffer) {
+            //     std::cout << std::hex << static_cast<int>(byte) << " ";
+            // }
+            // std::cout << std::dec << "\n";
         }
     }
+
 }
 
 std::vector<uint8_t> CanReceiver::getReceivedData() {

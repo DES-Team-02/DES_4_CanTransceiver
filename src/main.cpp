@@ -6,8 +6,8 @@
 int main(void)
 {
     // Create and start CAN receivers for two interfaces.
-    CanReceiver             can0("can0");
-    CanReceiver             can1("can1");
+    CanReceiver             can0("vcan0");
+    CanReceiver             can1("vcan1");
 
     auto transceiverStubImpl = std::make_shared<CanTransceiverStubImpl>();
 
@@ -23,7 +23,10 @@ int main(void)
     while (true)
     {
         auto rpmData    = can0.getReceivedData();
+        // printData("rpmData in main", rpmData);
         auto sonarData  = can1.getReceivedData();
+        // printData("sonarData in main", sonarData);
+        
 
         // Process each set of data.
         auto processedRpmData   = RpmProcess::process(rpmData);
@@ -34,6 +37,11 @@ int main(void)
         transceiverStubImpl->setSpeedAttribute(processedRpmData.speed);
 
         transceiverStubImpl->setDistancesAttribute(processedSonarData);
+
+        // std::cout << "Filtered RPM: " << processedRpmData.rpm << ", Speed: " << processedRpmData.speed << std::endl;
+        // std::cout << "Front Sensor Left: " << processedSonarData.getSensorfrontleft()
+        //   << ", Front Sensor Middle: " << processedSonarData.getSensorfrontmiddle()
+        //   << ", Front Sensor Right: " << processedSonarData.getSensorfrontright() << std::endl;
     }
 
     // Stop receiving data.
