@@ -6,8 +6,8 @@
 int main(void)
 {
     // Create and start CAN receivers for two interfaces.
-    CanReceiver             can0("vcan0");
-    CanReceiver             can1("vcan1");
+    CanReceiver             can0("can0");
+    CanReceiver             can1("can1");
 
     auto transceiverStubImpl = std::make_shared<CanTransceiverStubImpl>();
 
