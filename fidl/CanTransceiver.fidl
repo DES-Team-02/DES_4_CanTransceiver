@@ -8,8 +8,7 @@ interface CanTransceiver {
     attribute UInt32 rpm readonly
 
     struct SonarArrayStruct {
-        UInt32 sensorfrontleft
-        UInt32 sensorfrontmiddle
-        UInt32 sensorfrontright
+        UInt32 sensorfront
+        UInt32 sensorrear
     }
 }

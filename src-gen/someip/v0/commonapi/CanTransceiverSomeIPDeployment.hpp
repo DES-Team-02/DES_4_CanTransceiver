@@ -29,7 +29,6 @@ namespace CanTransceiver_ {
 // Interface-specific deployment types
 typedef CommonAPI::SomeIP::StructDeployment<
     CommonAPI::SomeIP::IntegerDeployment<uint32_t>,
-    CommonAPI::SomeIP::IntegerDeployment<uint32_t>,
     CommonAPI::SomeIP::IntegerDeployment<uint32_t>
 > SonarArrayStructDeployment_t;
 
