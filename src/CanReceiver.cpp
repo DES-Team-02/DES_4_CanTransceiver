@@ -69,10 +69,11 @@ int CanReceiver::openPort() {
 void CanReceiver::readData() {
     struct can_frame frame;
     while (_running) {
-        ssize_t nbytes = recv(_soc, &frame, sizeof(struct can_frame), MSG_WAITALL); // Blocking call
+        ssize_t nbytes = recv(_soc, &frame, sizeof(struct can_frame), 0);
         if (nbytes == sizeof(struct can_frame)) {
             std::lock_guard<std::mutex> lock(_mutex);
-            _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + frame.can_dlc);
+            _frame = frame;
+            // _dataBuffer = std::vector<uint8_t>(frame.data, frame.data + frame.can_dlc);
             // std::cout << "Received data: ";
             // for (auto byte : _dataBuffer) {
             //     std::cout << std::hex << static_cast<int>(byte) << " ";
@@ -83,9 +84,10 @@ void CanReceiver::readData() {
 
 }
 
-std::vector<uint8_t> CanReceiver::getReceivedData() {
+struct can_frame CanReceiver::getReceivedData() {
     std::lock_guard<std::mutex> lock(_mutex);
-    return _dataBuffer; // Return a copy of the data buffer
+    return _frame;
+    // return _dataBuffer; // Return a copy of the data buffer
 }
 
 void CanReceiver::closePort() {
