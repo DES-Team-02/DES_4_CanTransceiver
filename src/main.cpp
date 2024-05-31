@@ -9,6 +9,8 @@
 #include <net/if.h>
 #include <linux/can.h>
 #include "CanTransceiverStubImpl.hpp"
+#include "RpmProcess.hpp"
+#include "SonarProcess.hpp"
 
 #define NUMBER_OF_CAN_INTERFACES 2
 #define SPEED_SENSOR_CAN_ID      0x100
@@ -107,11 +109,17 @@ int main(void)
                 case SPEED_SENSOR_CAN_ID:
                 {
                     std::cout << "speed" << std::endl;
+                    RpmData processed = RpmProcess::process(frame);
+                    std::cout << processed.rpm << std::endl;
+                    std::cout << processed.speed << std::endl;
                     break;
                 }
                 case SONAR_SENSOR_CAN_ID:
                 {
                     std::cout << "sonar" << std::endl;
+                    SonarData processed = SonarProcess::process(frame);
+                    std::cout << processed.getSonarFront() << std::endl;
+                    std::cout << processed.getSonarRear() << std::endl;
                     break;
                 }
                 default:
