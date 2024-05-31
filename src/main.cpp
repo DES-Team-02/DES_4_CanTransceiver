@@ -8,6 +8,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <linux/can.h>
+#include <thread>
 #include "CanTransceiverStubImpl.hpp"
 #include "RpmProcess.hpp"
 #include "SonarProcess.hpp"
@@ -38,7 +39,7 @@ int create_and_bind_socket(const std::string& interface)
         return (-1);
     }
     addr.can_ifindex = ifr.ifr_ifindex;
-    fcntl(soc, F_SETFL, O_NONBLOCK);
+    // fcntl(soc, F_SETFL, O_NONBLOCK);
 
     if (bind(soc, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
@@ -95,7 +96,7 @@ int main(void)
 
     while (true)
     {
-        nfds = epoll_wait(epoll_fd, events, NUMBER_OF_CAN_INTERFACES, -1);
+        nfds = epoll_wait(epoll_fd, events, NUMBER_OF_CAN_INTERFACES, 100); // 100 millisecond timeout
         if (nfds == -1)
         {
             std::cerr << "epoll_wait failed" << std::endl;
@@ -137,7 +138,9 @@ int main(void)
                 }
             }
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
+    close(epoll_fd);
     return 0;
 }
