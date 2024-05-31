@@ -47,11 +47,15 @@ public:
         CanTransceiverSomeIPStubAdapterHelper::deinit();
     }
 
-    void fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value);
-    
     void fireSpeedAttributeChanged(const uint32_t &_value);
     
     void fireRpmAttributeChanged(const uint32_t &_value);
+    
+    void fireSonarFrontAttributeChanged(const uint32_t &_value);
+    
+    void fireSonarRearAttributeChanged(const uint32_t &_value);
+    
+    void fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value);
     
     void deactivateManagedInstances() {}
     
@@ -60,12 +64,6 @@ public:
         CommonAPI::Version
     > getCanTransceiverInterfaceVersionStubDispatcher;
 
-    CommonAPI::SomeIP::GetAttributeStubDispatcher<
-        ::v0::commonapi::CanTransceiverStub,
-        ::v0::commonapi::CanTransceiver::SonarArrayStruct,
-        ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t
-    > getDistancesAttributeStubDispatcher;
-    
     CommonAPI::SomeIP::GetAttributeStubDispatcher<
         ::v0::commonapi::CanTransceiverStub,
         uint32_t,
@@ -78,6 +76,24 @@ public:
         CommonAPI::SomeIP::IntegerDeployment<uint32_t>
     > getRpmAttributeStubDispatcher;
     
+    CommonAPI::SomeIP::GetAttributeStubDispatcher<
+        ::v0::commonapi::CanTransceiverStub,
+        uint32_t,
+        CommonAPI::SomeIP::IntegerDeployment<uint32_t>
+    > getSonarFrontAttributeStubDispatcher;
+    
+    CommonAPI::SomeIP::GetAttributeStubDispatcher<
+        ::v0::commonapi::CanTransceiverStub,
+        uint32_t,
+        CommonAPI::SomeIP::IntegerDeployment<uint32_t>
+    > getSonarRearAttributeStubDispatcher;
+    
+    CommonAPI::SomeIP::GetAttributeStubDispatcher<
+        ::v0::commonapi::CanTransceiverStub,
+        ::v0::commonapi::CanTransceiver::SonarArrayStruct,
+        ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t
+    > getDistancesAttributeStubDispatcher;
+    
     CanTransceiverSomeIPStubAdapterInternal(
         const CommonAPI::SomeIP::Address &_address,
         const std::shared_ptr<CommonAPI::SomeIP::ProxyConnection> &_connection,
@@ -88,49 +104,77 @@ public:
             _connection,
             std::dynamic_pointer_cast< CanTransceiverStub>(_stub)),
         getCanTransceiverInterfaceVersionStubDispatcher(&CanTransceiverStub::lockInterfaceVersionAttribute, &CanTransceiverStub::getInterfaceVersion, false, true),
-        getDistancesAttributeStubDispatcher(
-            &::v0::commonapi::CanTransceiverStub::lockDistancesAttribute,
-            &::v0::commonapi::CanTransceiverStub::getDistancesAttribute,
-            false,
-            _stub->hasElement(0))
-        ,
         getSpeedAttributeStubDispatcher(
             &::v0::commonapi::CanTransceiverStub::lockSpeedAttribute,
             &::v0::commonapi::CanTransceiverStub::getSpeedAttribute,
             false,
-            _stub->hasElement(1))
+            _stub->hasElement(0))
         ,
         getRpmAttributeStubDispatcher(
             &::v0::commonapi::CanTransceiverStub::lockRpmAttribute,
             &::v0::commonapi::CanTransceiverStub::getRpmAttribute,
             false,
+            _stub->hasElement(1))
+        ,
+        getSonarFrontAttributeStubDispatcher(
+            &::v0::commonapi::CanTransceiverStub::lockSonarFrontAttribute,
+            &::v0::commonapi::CanTransceiverStub::getSonarFrontAttribute,
+            false,
             _stub->hasElement(2))
+        ,
+        getSonarRearAttributeStubDispatcher(
+            &::v0::commonapi::CanTransceiverStub::lockSonarRearAttribute,
+            &::v0::commonapi::CanTransceiverStub::getSonarRearAttribute,
+            false,
+            _stub->hasElement(3))
+        ,
+        getDistancesAttributeStubDispatcher(
+            &::v0::commonapi::CanTransceiverStub::lockDistancesAttribute,
+            &::v0::commonapi::CanTransceiverStub::getDistancesAttribute,
+            false,
+            _stub->hasElement(4))
     {
-        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xc1d) }, &getDistancesAttributeStubDispatcher );
-        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xc81) }, &getSpeedAttributeStubDispatcher );
-        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xce5) }, &getRpmAttributeStubDispatcher );
+        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xce5) }, &getSpeedAttributeStubDispatcher );
+        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xd49) }, &getRpmAttributeStubDispatcher );
+        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xdad) }, &getSonarFrontAttributeStubDispatcher );
+        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xdae) }, &getSonarRearAttributeStubDispatcher );
+        CanTransceiverSomeIPStubAdapterHelper::addStubDispatcher( { CommonAPI::SomeIP::method_id_t(0xdaf) }, &getDistancesAttributeStubDispatcher );
         std::shared_ptr<CommonAPI::SomeIP::ClientId> itsClient = std::make_shared<CommonAPI::SomeIP::ClientId>();
 
         // Provided events/fields
         if (_stub->hasElement(0)) {
             std::set<CommonAPI::SomeIP::eventgroup_id_t> itsEventGroups;
-            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xc1c)));
-            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x7918), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
-            fireDistancesAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getDistancesAttribute(itsClient));
+            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xce4)));
+            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x80e8), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
+            fireSpeedAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getSpeedAttribute(itsClient));
         }
 
         if (_stub->hasElement(1)) {
             std::set<CommonAPI::SomeIP::eventgroup_id_t> itsEventGroups;
-            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xc80)));
-            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x7d00), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
-            fireSpeedAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getSpeedAttribute(itsClient));
+            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xd48)));
+            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x84d0), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
+            fireRpmAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getRpmAttribute(itsClient));
         }
 
         if (_stub->hasElement(2)) {
             std::set<CommonAPI::SomeIP::eventgroup_id_t> itsEventGroups;
-            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xce4)));
-            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x80e8), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
-            fireRpmAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getRpmAttribute(itsClient));
+            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xdac)));
+            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x88b8), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
+            fireSonarFrontAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getSonarFrontAttribute(itsClient));
+        }
+
+        if (_stub->hasElement(3)) {
+            std::set<CommonAPI::SomeIP::eventgroup_id_t> itsEventGroups;
+            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xdac)));
+            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x88b9), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
+            fireSonarRearAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getSonarRearAttribute(itsClient));
+        }
+
+        if (_stub->hasElement(4)) {
+            std::set<CommonAPI::SomeIP::eventgroup_id_t> itsEventGroups;
+            itsEventGroups.insert(CommonAPI::SomeIP::eventgroup_id_t(CommonAPI::SomeIP::eventgroup_id_t(0xdac)));
+            CommonAPI::SomeIP::StubAdapter::registerEvent(CommonAPI::SomeIP::event_id_t(0x88ba), itsEventGroups, CommonAPI::SomeIP::event_type_e::ET_FIELD, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE);
+            fireDistancesAttributeChanged(std::dynamic_pointer_cast< ::v0::commonapi::CanTransceiverStub>(_stub)->getDistancesAttribute(itsClient));
         }
 
     }
@@ -140,24 +184,6 @@ public:
     void unregisterSelectiveEventHandlers();
 
 };
-
-template <typename _Stub, typename... _Stubs>
-void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value) {
-    CommonAPI::Deployable< ::v0::commonapi::CanTransceiver::SonarArrayStruct, ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t> deployedValue(_value, static_cast< ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t* >(nullptr));
-    CommonAPI::SomeIP::StubEventHelper<
-        CommonAPI::SomeIP::SerializableArguments<
-            CommonAPI::Deployable<
-                ::v0::commonapi::CanTransceiver::SonarArrayStruct,
-                ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t
-            >
-            >
-    >::sendEvent(
-        *this,
-        CommonAPI::SomeIP::event_id_t(0x7918),
-        false,
-        deployedValue
-    );
-}
 
 template <typename _Stub, typename... _Stubs>
 void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireSpeedAttributeChanged(const uint32_t &_value) {
@@ -171,7 +197,7 @@ void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireSpeedAttribu
             >
     >::sendEvent(
         *this,
-        CommonAPI::SomeIP::event_id_t(0x7d00),
+        CommonAPI::SomeIP::event_id_t(0x80e8),
         false,
         deployedValue
     );
@@ -189,7 +215,61 @@ void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireRpmAttribute
             >
     >::sendEvent(
         *this,
-        CommonAPI::SomeIP::event_id_t(0x80e8),
+        CommonAPI::SomeIP::event_id_t(0x84d0),
+        false,
+        deployedValue
+    );
+}
+
+template <typename _Stub, typename... _Stubs>
+void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireSonarFrontAttributeChanged(const uint32_t &_value) {
+    CommonAPI::Deployable< uint32_t, CommonAPI::SomeIP::IntegerDeployment<uint32_t>> deployedValue(_value, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr));
+    CommonAPI::SomeIP::StubEventHelper<
+        CommonAPI::SomeIP::SerializableArguments<
+            CommonAPI::Deployable<
+                uint32_t,
+                CommonAPI::SomeIP::IntegerDeployment<uint32_t>
+            >
+            >
+    >::sendEvent(
+        *this,
+        CommonAPI::SomeIP::event_id_t(0x88b8),
+        false,
+        deployedValue
+    );
+}
+
+template <typename _Stub, typename... _Stubs>
+void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireSonarRearAttributeChanged(const uint32_t &_value) {
+    CommonAPI::Deployable< uint32_t, CommonAPI::SomeIP::IntegerDeployment<uint32_t>> deployedValue(_value, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr));
+    CommonAPI::SomeIP::StubEventHelper<
+        CommonAPI::SomeIP::SerializableArguments<
+            CommonAPI::Deployable<
+                uint32_t,
+                CommonAPI::SomeIP::IntegerDeployment<uint32_t>
+            >
+            >
+    >::sendEvent(
+        *this,
+        CommonAPI::SomeIP::event_id_t(0x88b9),
+        false,
+        deployedValue
+    );
+}
+
+template <typename _Stub, typename... _Stubs>
+void CanTransceiverSomeIPStubAdapterInternal<_Stub, _Stubs...>::fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value) {
+    CommonAPI::Deployable< ::v0::commonapi::CanTransceiver::SonarArrayStruct, ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t> deployedValue(_value, static_cast< ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t* >(nullptr));
+    CommonAPI::SomeIP::StubEventHelper<
+        CommonAPI::SomeIP::SerializableArguments<
+            CommonAPI::Deployable<
+                ::v0::commonapi::CanTransceiver::SonarArrayStruct,
+                ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t
+            >
+            >
+    >::sendEvent(
+        *this,
+        CommonAPI::SomeIP::event_id_t(0x88ba),
         false,
         deployedValue
     );
