@@ -89,6 +89,10 @@ int main(void)
         return 1;
     }
 
+    // Create CommonAPI Service
+    std::shared_ptr<CanTransceiverStubImpl> myService = std::make_shared<CanTransceiverStubImpl>();
+    myService->init();
+
     while (true)
     {
         nfds = epoll_wait(epoll_fd, events, NUMBER_OF_CAN_INTERFACES, -1);
@@ -108,22 +112,27 @@ int main(void)
                 {
                 case SPEED_SENSOR_CAN_ID:
                 {
-                    std::cout << "speed" << std::endl;
                     RpmData processed = RpmProcess::process(frame);
-                    std::cout << processed.rpm << std::endl;
-                    std::cout << processed.speed << std::endl;
+                    // std::cout << "rpm: " << processed.rpm
+                    //         << ", speed: " << processed.speed
+                    //         << std::endl;
+                    myService->setRpmAttribute(processed.rpm);
+                    myService->setSpeedAttribute(processed.speed);
                     break;
                 }
                 case SONAR_SENSOR_CAN_ID:
                 {
-                    std::cout << "sonar" << std::endl;
                     SonarData processed = SonarProcess::process(frame);
-                    std::cout << processed.getSonarFront() << std::endl;
-                    std::cout << processed.getSonarRear() << std::endl;
+                    // std::cout << "Sonar front: " << processed.getSonarFront()
+                    //         << ", rear: " << processed.getSonarRear()
+                    //         << std::endl;
+                    myService->setDistancesAttribute(processed);
+                    myService->setSonarFrontAttribute(processed.getSonarFront());
+                    myService->setSonarFrontAttribute(processed.getSonarRear());
                     break;
                 }
                 default:
-                    std::cout << "Unknown CAN ID" << std::endl;
+                    std::cout << "Unknown CAN ID: 0x" << std::hex << frame.can_id << std::endl;
                     break;
                 }
             }
