@@ -13,7 +13,7 @@
 #include "RpmProcess.hpp"
 #include "SonarProcess.hpp"
 
-#define NUMBER_OF_CAN_INTERFACES 2
+#define NUMBER_OF_CAN_INTERFACES 1
 #define SPEED_SENSOR_CAN_ID      0x100
 #define SONAR_SENSOR_CAN_ID      0x200
 
@@ -83,8 +83,7 @@ int main(void)
         return 1;
     }
 
-    if (add_interface_to_epoll(epoll_fd, "can0") < 0 ||
-        add_interface_to_epoll(epoll_fd, "can1") < 0)
+    if (add_interface_to_epoll(epoll_fd, "can0") < 0)
     {
         close(epoll_fd);
         return 1;
