@@ -128,7 +128,7 @@ int main(void)
                     //         << std::endl;
                     myService->setDistancesAttribute(processed);
                     myService->setSonarFrontAttribute(processed.getSonarFront());
-                    myService->setSonarFrontAttribute(processed.getSonarRear());
+                    myService->setSonarRearAttribute(processed.getSonarRear());
                     break;
                 }
                 default:
