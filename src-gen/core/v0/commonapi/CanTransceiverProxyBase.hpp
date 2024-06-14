@@ -39,18 +39,18 @@ namespace commonapi {
 class CanTransceiverProxyBase
     : virtual public CommonAPI::Proxy {
 public:
-    typedef CommonAPI::ObservableReadonlyAttribute<::v0::commonapi::CanTransceiver::SonarArrayStruct> DistancesAttribute;
     typedef CommonAPI::ObservableReadonlyAttribute<uint32_t> SpeedAttribute;
     typedef CommonAPI::ObservableReadonlyAttribute<uint32_t> RpmAttribute;
     typedef CommonAPI::ObservableReadonlyAttribute<uint32_t> SonarFrontAttribute;
     typedef CommonAPI::ObservableReadonlyAttribute<uint32_t> SonarRearAttribute;
+    typedef CommonAPI::ObservableReadonlyAttribute<::v0::commonapi::CanTransceiver::SonarArrayStruct> DistancesAttribute;
 
 
-    virtual DistancesAttribute& getDistancesAttribute() = 0;
     virtual SpeedAttribute& getSpeedAttribute() = 0;
     virtual RpmAttribute& getRpmAttribute() = 0;
     virtual SonarFrontAttribute& getSonarFrontAttribute() = 0;
     virtual SonarRearAttribute& getSonarRearAttribute() = 0;
+    virtual DistancesAttribute& getDistancesAttribute() = 0;
 
     virtual std::future<void> getCompletionFuture() = 0;
 };

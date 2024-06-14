@@ -71,12 +71,6 @@ public:
     virtual std::future<void> getCompletionFuture();
 
     /**
-     * Returns the wrapper class that provides access to the attribute distances.
-     */
-    virtual DistancesAttribute& getDistancesAttribute() {
-        return delegate_->getDistancesAttribute();
-    }
-    /**
      * Returns the wrapper class that provides access to the attribute speed.
      */
     virtual SpeedAttribute& getSpeedAttribute() {
@@ -100,6 +94,12 @@ public:
     virtual SonarRearAttribute& getSonarRearAttribute() {
         return delegate_->getSonarRearAttribute();
     }
+    /**
+     * Returns the wrapper class that provides access to the attribute distances.
+     */
+    virtual DistancesAttribute& getDistancesAttribute() {
+        return delegate_->getDistancesAttribute();
+    }
 
 
 
@@ -110,25 +110,6 @@ public:
 typedef CanTransceiverProxy<> CanTransceiverProxyDefault;
 
 namespace CanTransceiverExtensions {
-    template <template <typename > class _ExtensionType>
-    class DistancesAttributeExtension {
-     public:
-        typedef _ExtensionType< CanTransceiverProxyBase::DistancesAttribute> extension_type;
-    
-        static_assert(std::is_base_of<typename CommonAPI::AttributeExtension< CanTransceiverProxyBase::DistancesAttribute>, extension_type>::value,
-                      "Not CommonAPI Attribute Extension!");
-    
-        DistancesAttributeExtension(CanTransceiverProxyBase& proxy): attributeExtension_(proxy.getDistancesAttribute()) {
-        }
-    
-        inline extension_type& getDistancesAttributeExtension() {
-            return attributeExtension_;
-        }
-    
-     private:
-        extension_type attributeExtension_;
-    };
-
     template <template <typename > class _ExtensionType>
     class SpeedAttributeExtension {
      public:
@@ -205,6 +186,25 @@ namespace CanTransceiverExtensions {
         extension_type attributeExtension_;
     };
 
+    template <template <typename > class _ExtensionType>
+    class DistancesAttributeExtension {
+     public:
+        typedef _ExtensionType< CanTransceiverProxyBase::DistancesAttribute> extension_type;
+    
+        static_assert(std::is_base_of<typename CommonAPI::AttributeExtension< CanTransceiverProxyBase::DistancesAttribute>, extension_type>::value,
+                      "Not CommonAPI Attribute Extension!");
+    
+        DistancesAttributeExtension(CanTransceiverProxyBase& proxy): attributeExtension_(proxy.getDistancesAttribute()) {
+        }
+    
+        inline extension_type& getDistancesAttributeExtension() {
+            return attributeExtension_;
+        }
+    
+     private:
+        extension_type attributeExtension_;
+    };
+
 } // namespace CanTransceiverExtensions
 
 //
@@ -260,11 +260,11 @@ template<template<typename > class _AttributeExtension>
 struct DefaultAttributeProxyHelper< ::v0::commonapi::CanTransceiverProxy,
     _AttributeExtension> {
     typedef typename ::v0::commonapi::CanTransceiverProxy<
-            ::v0::commonapi::CanTransceiverExtensions::DistancesAttributeExtension<_AttributeExtension>, 
             ::v0::commonapi::CanTransceiverExtensions::SpeedAttributeExtension<_AttributeExtension>, 
             ::v0::commonapi::CanTransceiverExtensions::RpmAttributeExtension<_AttributeExtension>, 
             ::v0::commonapi::CanTransceiverExtensions::SonarFrontAttributeExtension<_AttributeExtension>, 
-            ::v0::commonapi::CanTransceiverExtensions::SonarRearAttributeExtension<_AttributeExtension>
+            ::v0::commonapi::CanTransceiverExtensions::SonarRearAttributeExtension<_AttributeExtension>, 
+            ::v0::commonapi::CanTransceiverExtensions::DistancesAttributeExtension<_AttributeExtension>
     > class_t;
 };
 }

@@ -51,8 +51,6 @@ class CanTransceiverStubAdapter
     : public virtual CommonAPI::StubAdapter,
       public virtual CanTransceiver {
  public:
-    ///Notifies all remote listeners about a change of value of the attribute distances.
-    virtual void fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &distances) = 0;
     ///Notifies all remote listeners about a change of value of the attribute speed.
     virtual void fireSpeedAttributeChanged(const uint32_t &speed) = 0;
     ///Notifies all remote listeners about a change of value of the attribute rpm.
@@ -61,17 +59,12 @@ class CanTransceiverStubAdapter
     virtual void fireSonarFrontAttributeChanged(const uint32_t &sonarFront) = 0;
     ///Notifies all remote listeners about a change of value of the attribute sonarRear.
     virtual void fireSonarRearAttributeChanged(const uint32_t &sonarRear) = 0;
+    ///Notifies all remote listeners about a change of value of the attribute distances.
+    virtual void fireDistancesAttributeChanged(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &distances) = 0;
 
 
     virtual void deactivateManagedInstances() = 0;
 
-    void lockDistancesAttribute(bool _lockAccess) {
-        if (_lockAccess) {
-            distancesMutex_.lock();
-        } else {
-            distancesMutex_.unlock();
-        }
-    }
     void lockSpeedAttribute(bool _lockAccess) {
         if (_lockAccess) {
             speedMutex_.lock();
@@ -100,17 +93,24 @@ class CanTransceiverStubAdapter
             sonarRearMutex_.unlock();
         }
     }
+    void lockDistancesAttribute(bool _lockAccess) {
+        if (_lockAccess) {
+            distancesMutex_.lock();
+        } else {
+            distancesMutex_.unlock();
+        }
+    }
 
 protected:
     /**
      * Defines properties for storing the ClientIds of clients / proxies that have
      * subscribed to the selective broadcasts
      */
-    std::recursive_mutex distancesMutex_;
     std::recursive_mutex speedMutex_;
     std::recursive_mutex rpmMutex_;
     std::recursive_mutex sonarFrontMutex_;
     std::recursive_mutex sonarRearMutex_;
+    std::recursive_mutex distancesMutex_;
 
 };
 
@@ -151,19 +151,6 @@ public:
     }
     virtual const CommonAPI::Version& getInterfaceVersion(std::shared_ptr<CommonAPI::ClientId> _client) = 0;
 
-    /// Provides getter access to the attribute distances
-    virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute(const std::shared_ptr<CommonAPI::ClientId> _client) = 0;
-    /// sets attribute with the given value and propagates it to the adapter
-    virtual void fireDistancesAttributeChanged(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
-    auto stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
-    if (stubAdapter)
-        stubAdapter->fireDistancesAttributeChanged(_value);
-    }
-    void lockDistancesAttribute(bool _lockAccess) {
-        auto stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
-        if (stubAdapter)
-            stubAdapter->lockDistancesAttribute(_lockAccess);
-    }
     /// Provides getter access to the attribute speed
     virtual const uint32_t &getSpeedAttribute(const std::shared_ptr<CommonAPI::ClientId> _client) = 0;
     /// sets attribute with the given value and propagates it to the adapter
@@ -215,6 +202,19 @@ public:
         auto stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
         if (stubAdapter)
             stubAdapter->lockSonarRearAttribute(_lockAccess);
+    }
+    /// Provides getter access to the attribute distances
+    virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute(const std::shared_ptr<CommonAPI::ClientId> _client) = 0;
+    /// sets attribute with the given value and propagates it to the adapter
+    virtual void fireDistancesAttributeChanged(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
+    auto stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
+    if (stubAdapter)
+        stubAdapter->fireDistancesAttributeChanged(_value);
+    }
+    void lockDistancesAttribute(bool _lockAccess) {
+        auto stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
+        if (stubAdapter)
+            stubAdapter->lockDistancesAttribute(_lockAccess);
     }
 
 

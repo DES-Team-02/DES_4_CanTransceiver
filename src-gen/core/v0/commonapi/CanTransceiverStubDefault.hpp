@@ -60,19 +60,6 @@ public:
         return &remoteEventHandler_;
     }
 
-    COMMONAPI_EXPORT virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute() {
-        return distancesAttributeValue_;
-    }
-    COMMONAPI_EXPORT virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute(const std::shared_ptr<CommonAPI::ClientId> _client) {
-        (void)_client;
-        return getDistancesAttribute();
-    }
-    COMMONAPI_EXPORT virtual void setDistancesAttribute(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
-        const bool valueChanged = trySetDistancesAttribute(std::move(_value));
-        if (valueChanged) {
-            fireDistancesAttributeChanged(distancesAttributeValue_);
-        }
-    }
     COMMONAPI_EXPORT virtual const uint32_t &getSpeedAttribute() {
         return speedAttributeValue_;
     }
@@ -125,31 +112,22 @@ public:
             fireSonarRearAttributeChanged(sonarRearAttributeValue_);
         }
     }
+    COMMONAPI_EXPORT virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute() {
+        return distancesAttributeValue_;
+    }
+    COMMONAPI_EXPORT virtual const ::v0::commonapi::CanTransceiver::SonarArrayStruct &getDistancesAttribute(const std::shared_ptr<CommonAPI::ClientId> _client) {
+        (void)_client;
+        return getDistancesAttribute();
+    }
+    COMMONAPI_EXPORT virtual void setDistancesAttribute(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
+        const bool valueChanged = trySetDistancesAttribute(std::move(_value));
+        if (valueChanged) {
+            fireDistancesAttributeChanged(distancesAttributeValue_);
+        }
+    }
 
 
 protected:
-    COMMONAPI_EXPORT virtual bool trySetDistancesAttribute(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
-        if (!validateDistancesAttributeRequestedValue(_value))
-            return false;
-
-        bool valueChanged;
-        std::shared_ptr<CanTransceiverStubAdapter> stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
-        if(stubAdapter) {
-            stubAdapter->lockDistancesAttribute(true);
-            valueChanged = (distancesAttributeValue_ != _value);
-            distancesAttributeValue_ = std::move(_value);
-            stubAdapter->lockDistancesAttribute(false);
-        } else {
-            valueChanged = (distancesAttributeValue_ != _value);
-            distancesAttributeValue_ = std::move(_value);
-        }
-
-       return valueChanged;
-    }
-    COMMONAPI_EXPORT virtual bool validateDistancesAttributeRequestedValue(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value) {
-        (void)_value;
-        return true;
-    }
     COMMONAPI_EXPORT virtual bool trySetSpeedAttribute(uint32_t _value) {
         if (!validateSpeedAttributeRequestedValue(_value))
             return false;
@@ -238,6 +216,28 @@ protected:
         (void)_value;
         return true;
     }
+    COMMONAPI_EXPORT virtual bool trySetDistancesAttribute(::v0::commonapi::CanTransceiver::SonarArrayStruct _value) {
+        if (!validateDistancesAttributeRequestedValue(_value))
+            return false;
+
+        bool valueChanged;
+        std::shared_ptr<CanTransceiverStubAdapter> stubAdapter = CommonAPI::Stub<CanTransceiverStubAdapter, CanTransceiverStubRemoteEvent>::stubAdapter_.lock();
+        if(stubAdapter) {
+            stubAdapter->lockDistancesAttribute(true);
+            valueChanged = (distancesAttributeValue_ != _value);
+            distancesAttributeValue_ = std::move(_value);
+            stubAdapter->lockDistancesAttribute(false);
+        } else {
+            valueChanged = (distancesAttributeValue_ != _value);
+            distancesAttributeValue_ = std::move(_value);
+        }
+
+       return valueChanged;
+    }
+    COMMONAPI_EXPORT virtual bool validateDistancesAttributeRequestedValue(const ::v0::commonapi::CanTransceiver::SonarArrayStruct &_value) {
+        (void)_value;
+        return true;
+    }
     class COMMONAPI_EXPORT_CLASS_EXPLICIT RemoteEventHandler: public virtual CanTransceiverStubRemoteEvent {
     public:
         COMMONAPI_EXPORT RemoteEventHandler(CanTransceiverStubDefault *_defaultStub)
@@ -254,11 +254,11 @@ protected:
 
 private:
 
-    ::v0::commonapi::CanTransceiver::SonarArrayStruct distancesAttributeValue_ {};
     uint32_t speedAttributeValue_ {};
     uint32_t rpmAttributeValue_ {};
     uint32_t sonarFrontAttributeValue_ {};
     uint32_t sonarRearAttributeValue_ {};
+    ::v0::commonapi::CanTransceiver::SonarArrayStruct distancesAttributeValue_ {};
 
     CommonAPI::Version interfaceVersion_;
 };
