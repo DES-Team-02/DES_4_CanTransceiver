@@ -117,7 +117,7 @@ int main(void)
                     //         << ", speed: " << processed.speed
                     //         << std::endl;
                     myService->setRpmAttribute(processed.rpm);
-                    myService->setSpeedAttribute(processed.speed);
+                    myService->setSpeedAttribute(processed.speed * 60); // converting m/sec to m/min
                     break;
                 }
                 case SONAR_SENSOR_CAN_ID:
