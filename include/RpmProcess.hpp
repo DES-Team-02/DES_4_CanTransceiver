@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdint>
+#include <linux/can.h>
 #include "MovingAverageFilter.hpp"
 
 struct RpmData {
@@ -15,7 +16,7 @@ public:
     RpmProcess();
     ~RpmProcess();
 
-    static RpmData process(const std::vector<uint8_t>& data);
+    static RpmData process(const struct can_frame& frame);
 
 private:
     static const double        _wheel_radius;

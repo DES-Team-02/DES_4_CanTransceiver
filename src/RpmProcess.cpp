@@ -8,10 +8,11 @@ RpmProcess::RpmProcess() {}
 
 RpmProcess::~RpmProcess() {}
 
-RpmData RpmProcess::process(const std::vector<uint8_t>& data) {
-    if (data.size() < 2) {
+RpmData RpmProcess::process(const struct can_frame& frame) 
+{
+    std::vector<uint8_t> data = std::vector<uint8_t>(frame.data, frame.data + frame.can_dlc);
+    if (data.size() < 2) 
         return {0.0, 0.0};
-    }
 
     unsigned int    rpmValue    = static_cast<unsigned int>((data[0] << 8) | data[1]);
     double          filteredRpm = _movingAverageFilter.filter(static_cast<double>(rpmValue));

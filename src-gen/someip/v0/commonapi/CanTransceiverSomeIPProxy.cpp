@@ -47,23 +47,31 @@ CanTransceiverSomeIPProxy::CanTransceiverSomeIPProxy(
     const CommonAPI::SomeIP::Address &_address,
     const std::shared_ptr<CommonAPI::SomeIP::ProxyConnection> &_connection)
         : CommonAPI::SomeIP::Proxy(_address, _connection),
-          distances_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xc1c), CommonAPI::SomeIP::event_id_t(0x7918), CommonAPI::SomeIP::method_id_t(0xc1d), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t* >(nullptr)),
-          speed_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xc80), CommonAPI::SomeIP::event_id_t(0x7d00), CommonAPI::SomeIP::method_id_t(0xc81), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr)),
-          rpm_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xce4), CommonAPI::SomeIP::event_id_t(0x80e8), CommonAPI::SomeIP::method_id_t(0xce5), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr))
+          speed_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xce4), CommonAPI::SomeIP::event_id_t(0x80e8), CommonAPI::SomeIP::method_id_t(0xce5), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr)),
+          rpm_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xd48), CommonAPI::SomeIP::event_id_t(0x84d0), CommonAPI::SomeIP::method_id_t(0xd49), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr)),
+          sonarFront_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xdac), CommonAPI::SomeIP::event_id_t(0x88b8), CommonAPI::SomeIP::method_id_t(0xdad), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr)),
+          sonarRear_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xdac), CommonAPI::SomeIP::event_id_t(0x88b9), CommonAPI::SomeIP::method_id_t(0xdae), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< CommonAPI::SomeIP::IntegerDeployment<uint32_t>* >(nullptr)),
+          distances_(*this, CommonAPI::SomeIP::eventgroup_id_t(0xdac), CommonAPI::SomeIP::event_id_t(0x88ba), CommonAPI::SomeIP::method_id_t(0xdaf), true, CommonAPI::SomeIP::reliability_type_e::RT_RELIABLE, false, static_cast< ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t* >(nullptr))
 {
 }
 
 CanTransceiverSomeIPProxy::~CanTransceiverSomeIPProxy() {
 }
 
-CanTransceiverSomeIPProxy::DistancesAttribute& CanTransceiverSomeIPProxy::getDistancesAttribute() {
-    return distances_;
-}
 CanTransceiverSomeIPProxy::SpeedAttribute& CanTransceiverSomeIPProxy::getSpeedAttribute() {
     return speed_;
 }
 CanTransceiverSomeIPProxy::RpmAttribute& CanTransceiverSomeIPProxy::getRpmAttribute() {
     return rpm_;
+}
+CanTransceiverSomeIPProxy::SonarFrontAttribute& CanTransceiverSomeIPProxy::getSonarFrontAttribute() {
+    return sonarFront_;
+}
+CanTransceiverSomeIPProxy::SonarRearAttribute& CanTransceiverSomeIPProxy::getSonarRearAttribute() {
+    return sonarRear_;
+}
+CanTransceiverSomeIPProxy::DistancesAttribute& CanTransceiverSomeIPProxy::getDistancesAttribute() {
+    return distances_;
 }
 
 

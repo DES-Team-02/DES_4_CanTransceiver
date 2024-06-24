@@ -55,20 +55,26 @@ public:
 
     virtual ~CanTransceiverSomeIPProxy();
 
-    virtual DistancesAttribute& getDistancesAttribute();
-
     virtual SpeedAttribute& getSpeedAttribute();
 
     virtual RpmAttribute& getRpmAttribute();
+
+    virtual SonarFrontAttribute& getSonarFrontAttribute();
+
+    virtual SonarRearAttribute& getSonarRearAttribute();
+
+    virtual DistancesAttribute& getDistancesAttribute();
 
     virtual void getOwnVersion(uint16_t &_major, uint16_t &_minor) const;
 
     virtual std::future<void> getCompletionFuture();
 
 private:
-    CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<DistancesAttribute, ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t>> distances_;
     CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<SpeedAttribute, CommonAPI::SomeIP::IntegerDeployment<uint32_t>>> speed_;
     CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<RpmAttribute, CommonAPI::SomeIP::IntegerDeployment<uint32_t>>> rpm_;
+    CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<SonarFrontAttribute, CommonAPI::SomeIP::IntegerDeployment<uint32_t>>> sonarFront_;
+    CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<SonarRearAttribute, CommonAPI::SomeIP::IntegerDeployment<uint32_t>>> sonarRear_;
+    CommonAPI::SomeIP::ObservableAttribute<CommonAPI::SomeIP::ReadonlyAttribute<DistancesAttribute, ::v0::commonapi::CanTransceiver_::SonarArrayStructDeployment_t>> distances_;
 
 };
 

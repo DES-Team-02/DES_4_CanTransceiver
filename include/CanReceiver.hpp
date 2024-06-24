@@ -25,7 +25,7 @@ public:
     ~CanReceiver();
     bool start();
     void stop();
-    std::vector<uint8_t> getReceivedData();
+    struct can_frame getReceivedData();
 
 private:
     std::string _interface;
@@ -33,7 +33,8 @@ private:
 
     std::atomic<bool> _running;
     std::mutex _mutex; 
-    std::vector<uint8_t> _dataBuffer;
+    // std::vector<uint8_t> _dataBuffer;
+    struct can_frame _frame;
     std::thread _dataThread;
 
     int openPort();
